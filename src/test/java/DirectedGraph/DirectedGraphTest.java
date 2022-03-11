@@ -7,120 +7,151 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DirectedGraphTest {
+    DirectedGraph graph = new DirectedGraph((
+            Set.of(
+                    new DirectedGraph.Vertex("vv"),
+                    new DirectedGraph.Vertex("cc"),
+                    new DirectedGraph.Vertex("ff"),
+                    new DirectedGraph.Vertex("kk"))
+    ),
+            Set.of(
+                    new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                    new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                    new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
+    );
 
     @Test
     public void addVertex() {
-        DirectedGraph graph = new DirectedGraph();
-        graph.addVertex("vv");
         graph.addVertex("cc");
         graph.addVertex("ss");
-        DirectedGraph expected = new DirectedGraph(Set.of(
-                new DirectedGraph.Vertex("vv"),
-                new DirectedGraph.Vertex("cc"),
-                new DirectedGraph.Vertex("ss")
-        ), Set.of());
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
+                        new DirectedGraph.Vertex("vv"),
+                        new DirectedGraph.Vertex("cc"),
+                        new DirectedGraph.Vertex("ff"),
+                        new DirectedGraph.Vertex("kk"),
+                        new DirectedGraph.Vertex("ss"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("сс"), new DirectedGraph.Vertex("ff"), 5))
+        );
         assertEquals(expected, graph);
     }
 
     @Test
     public void addArc() {
-        DirectedGraph graph = new DirectedGraph();
-        graph.addArc("vv", "cc", 3);
-        graph.addArc("tt", "kk", 5);
-        DirectedGraph expected = new DirectedGraph(Set.of(), Set.of(
-                new DirectedGraph.Arc(
+        graph.addArc("vv", "ii", 3);
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
                         new DirectedGraph.Vertex("vv"),
                         new DirectedGraph.Vertex("cc"),
-                        3),
-                new DirectedGraph.Arc(
-                        new DirectedGraph.Vertex("tt"),
-                        new DirectedGraph.Vertex("kk"),
-                        5)));
+                        new DirectedGraph.Vertex("ii"),
+                        new DirectedGraph.Vertex("ff"),
+                        new DirectedGraph.Vertex("kk"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("ii"), 3),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
+        );
         assertEquals(expected, graph);
     }
 
     @Test
     public void deleteVertex() {
-        DirectedGraph graph = new DirectedGraph((Set.of(
-                new DirectedGraph.Vertex("vv"),
-                new DirectedGraph.Vertex("cc"))),
-                Set.of());
-        graph.deleteVertex("cc");
-        DirectedGraph expected = new DirectedGraph(Set.of(new DirectedGraph.Vertex("vv")), Set.of());
+        graph.deleteVertex(graph.getVertex("ff"));
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
+                        new DirectedGraph.Vertex("vv"),
+                        new DirectedGraph.Vertex("cc"),
+                        new DirectedGraph.Vertex("kk"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9))
+        );
         assertEquals(expected, graph);
     }
 
     @Test
     public void deleteArc() {
-        DirectedGraph graph = new DirectedGraph((Set.of(
-                new DirectedGraph.Vertex("ff"),
-                new DirectedGraph.Vertex("cc"))),
-                Set.of(new DirectedGraph.Arc(
+        graph.deleteArc("vv", "cc");
+        graph.deleteArc("ff", "cc");
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
                         new DirectedGraph.Vertex("vv"),
                         new DirectedGraph.Vertex("cc"),
-                        4)));
-        graph.deleteArc("vv", "cc");
-        DirectedGraph expected = new DirectedGraph(Set.of(
-                new DirectedGraph.Vertex("vv"),
-                new DirectedGraph.Vertex("ff"),
-                new DirectedGraph.Vertex("cc")),
-                Set.of());
+                        new DirectedGraph.Vertex("ff"),
+                        new DirectedGraph.Vertex("kk"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
+        );
         assertEquals(expected, graph);
     }
 
     @Test
     public void setNameVertex() {
-        DirectedGraph graph = new DirectedGraph((Set.of(
-                new DirectedGraph.Vertex("ff"),
-                new DirectedGraph.Vertex("cc"))),
-                Set.of());
-        graph.receiveVertex("ff").setName("ii");
-        DirectedGraph expected = new DirectedGraph(Set.of(
-                new DirectedGraph.Vertex("ii"),
-                new DirectedGraph.Vertex("cc")),
-                Set.of());
+        graph.addArc("ff", "kk", 3);
+        graph.setNameVertex(graph.getVertex("ff"), "ii");
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
+                        new DirectedGraph.Vertex("vv"),
+                        new DirectedGraph.Vertex("cc"),
+                        new DirectedGraph.Vertex("ii"),
+                        new DirectedGraph.Vertex("kk"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("ii"), new DirectedGraph.Vertex("kk"), 3),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ii"), 5))
+        );
         assertEquals(expected, graph);
     }
 
     @Test
-    public void setNameArc() {
-        DirectedGraph graph = new DirectedGraph((Set.of()),
-                Set.of(new DirectedGraph.Arc(
+    public void setWeightArc() {
+        graph.getArcByName("vv", "cc").setWeight(6);
+        graph.getArcByVertexes(graph.getVertex("vv"), graph.getVertex("cc")).setWeight(8);
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
                         new DirectedGraph.Vertex("vv"),
                         new DirectedGraph.Vertex("cc"),
-                        4)));
-        graph.receiveArc("vv", "cc").setWeight(6);
-        DirectedGraph expected = new DirectedGraph(Set.of(
-                new DirectedGraph.Vertex("vv"),
-                new DirectedGraph.Vertex("cc")),
-                Set.of(new DirectedGraph.Arc(
-                        new DirectedGraph.Vertex("vv"),
-                        new DirectedGraph.Vertex("cc"),
-                        6 )));
+                        new DirectedGraph.Vertex("ff"),
+                        new DirectedGraph.Vertex("kk"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
+        );
         assertEquals(expected, graph);
     }
 
     @Test
     public void getIncomingArcs() {
-        DirectedGraph graph = new DirectedGraph((Set.of()), Set.of(
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("сс"), new DirectedGraph.Vertex("ff"), 5)));
         assertEquals(Set.of(
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"),new DirectedGraph.Vertex("cc"), 4),
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"),new DirectedGraph.Vertex("cc"), 9))
-                , graph.getIncomingArcs(graph.receiveVertex("cc")));
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9))
+                , graph.getIncomingArcs(graph.getVertex("cc")));
     }
 
     @Test
     public void getOutcomingArcs() {
-        DirectedGraph graph = new DirectedGraph((Set.of()), Set.of(
+        DirectedGraph graph = new DirectedGraph(Set.of(), Set.of(
                 new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("ii"), 9),
-                new DirectedGraph.Arc(new DirectedGraph.Vertex("сс"), new DirectedGraph.Vertex("ff"), 5)));
+                new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("ii"), 4),
+                new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
+        );
         assertEquals(Set.of(
-                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"),new DirectedGraph.Vertex("cc"), 4),
-                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"),new DirectedGraph.Vertex("ii"), 9))
-                , graph.getOutcomingArcs(graph.receiveVertex("vv")));
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("ii"), 4)),
+                graph.getOutcomingArcs(graph.getVertex("vv")));
     }
 }
