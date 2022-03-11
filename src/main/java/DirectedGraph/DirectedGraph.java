@@ -43,7 +43,9 @@ public class DirectedGraph {
         }
 
         public void setWeight(int value) {
-            weight = value;
+            try {
+                if (value > 0) weight = value;
+            } catch (NullPointerException ignored) {}
         }
 
         public int getWeight() {
@@ -88,15 +90,21 @@ public class DirectedGraph {
     }
 
     public void deleteVertex(Vertex vertex) {
-        arcs.removeAll(getIncomingArcs(vertex));
-        arcs.removeAll(getOutcomingArcs(vertex));
-        vertexes.remove(vertex.name);
+        try {
+            arcs.removeAll(getIncomingArcs(vertex));
+            arcs.removeAll(getOutcomingArcs(vertex));
+            vertexes.remove(vertex.name);
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public void setNameVertex(Vertex vertex, String newName) {
-        vertexes.remove(vertex.name);
-        vertex.name = newName;
-        vertexes.put(vertex.name, vertex);
+        try {
+            vertexes.remove(vertex.name);
+            vertex.name = newName;
+            vertexes.put(vertex.name, vertex);
+        } catch (NullPointerException ignored) {
+        }
     }
 
     public Arc getArcByName(String begin, String end) {

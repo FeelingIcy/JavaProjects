@@ -117,6 +117,7 @@ public class DirectedGraphTest {
     @Test
     public void setWeightArc() {
         graph.getArcByName("vv", "cc").setWeight(6);
+        graph.getArcByName("kk", "cc").setWeight(-1);
         graph.getArcByVertexes(graph.getVertex("vv"), graph.getVertex("cc")).setWeight(8);
         DirectedGraph expected = new DirectedGraph((
                 Set.of(
@@ -126,7 +127,7 @@ public class DirectedGraphTest {
                         new DirectedGraph.Vertex("kk"))
         ),
                 Set.of(
-                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 8),
                         new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
                         new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
         );
@@ -153,5 +154,26 @@ public class DirectedGraphTest {
                         new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("cc"), 4),
                         new DirectedGraph.Arc(new DirectedGraph.Vertex("vv"), new DirectedGraph.Vertex("ii"), 4)),
                 graph.getOutcomingArcs(graph.getVertex("vv")));
+    }
+
+    @Test
+    public void mixedTests() {
+        graph.deleteVertex(graph.getVertex("ii"));
+        graph.getArcByVertexes(graph.getVertex("vv"), graph.getVertex("cc")).setWeight(8);
+        graph.setNameVertex(graph.getVertex("vv"), "oo");
+        graph.setNameVertex(graph.getVertex("aa"), "ll" );
+        DirectedGraph expected = new DirectedGraph((
+                Set.of(
+                        new DirectedGraph.Vertex("oo"),
+                        new DirectedGraph.Vertex("cc"),
+                        new DirectedGraph.Vertex("ff"),
+                        new DirectedGraph.Vertex("kk"))
+        ),
+                Set.of(
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("oo"), new DirectedGraph.Vertex("cc"), 8),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("kk"), new DirectedGraph.Vertex("cc"), 9),
+                        new DirectedGraph.Arc(new DirectedGraph.Vertex("cc"), new DirectedGraph.Vertex("ff"), 5))
+        );
+        assertEquals(expected, graph);
     }
 }
