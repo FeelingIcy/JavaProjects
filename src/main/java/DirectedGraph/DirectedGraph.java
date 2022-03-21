@@ -43,9 +43,7 @@ public class DirectedGraph {
         }
 
         public void setWeight(int value) {
-            try {
-                if (value > 0) weight = value;
-            } catch (NullPointerException ignored) {}
+            if (value > 0) weight = value;
         }
 
         public int getWeight() {
@@ -53,15 +51,16 @@ public class DirectedGraph {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof Arc)) return false;
-            Arc arc = (Arc) obj;
-            return weight == arc.weight && begin.equals(arc.begin) && end.equals(arc.end);
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Arc arc = (Arc) o;
+            return weight == arc.weight && Objects.equals(begin, arc.begin) && Objects.equals(end, arc.end);
         }
 
         @Override
         public int hashCode() {
-            return 2 * begin.hashCode() + end.hashCode() + weight;
+            return Objects.hash(begin, end, weight);
         }
     }
 
@@ -74,6 +73,23 @@ public class DirectedGraph {
         for (Arc i : arcs) {
             this.vertexes.put(i.begin.name, i.begin);
             this.vertexes.put(i.end.name, i.end);
+        }
+    }
+
+    public DirectedGraph(String vertexesString, String arcsString) {
+        if (vertexesString != null && arcsString != null) {
+            String[] vertexesNames = vertexesString.split(", ");
+            String[] arcsSubstrings = arcsString.split("; ");
+            for (String vertexName: vertexesNames) {
+                vertexes.put(vertexName, new Vertex(vertexName));
+            }
+            for (String arcStr: arcsSubstrings) {
+                String[] arcElements = arcStr.split(", ");
+                Vertex begin = new Vertex(arcElements[0]);
+                Vertex end = new Vertex(arcElements[1]);
+                int weight = Integer.parseInt(arcElements[2]);
+                arcs.add(new Arc(begin, end, weight));
+            }
         }
     }
 
@@ -90,20 +106,18 @@ public class DirectedGraph {
     }
 
     public void deleteVertex(Vertex vertex) {
-        try {
+        if (vertex != null) {
             arcs.removeAll(getIncomingArcs(vertex));
             arcs.removeAll(getOutcomingArcs(vertex));
             vertexes.remove(vertex.name);
-        } catch (NullPointerException ignored) {
         }
     }
 
     public void setNameVertex(Vertex vertex, String newName) {
-        try {
+        if (vertex != null) {
             vertexes.remove(vertex.name);
             vertex.name = newName;
             vertexes.put(vertex.name, vertex);
-        } catch (NullPointerException ignored) {
         }
     }
 
@@ -115,10 +129,7 @@ public class DirectedGraph {
     }
 
     public Arc getArcByVertexes(Vertex begin, Vertex end) {
-        for (Arc i : arcs) {
-            if (begin.equals(i.begin) && end.equals(i.end)) return i;
-        }
-        return null;
+        return getArcByName(begin.name, end.name);
     }
 
     public void addArc(String begin, String end, int weight) {
@@ -146,7 +157,7 @@ public class DirectedGraph {
     public Set<Arc> getIncomingArcs(Vertex vertex) {
         Set<Arc> result = new HashSet<>();
         for (Arc arc : arcs) {
-            if (arc.end.equals(vertex)) result.add(arc);
+            if (Objects.equals(arc.end, vertex)) result.add(arc);
         }
         return result;
     }
@@ -154,12 +165,24 @@ public class DirectedGraph {
     public Set<Arc> getOutcomingArcs(Vertex vertex) {
         Set<Arc> result = new HashSet<>();
         for (Arc arc : arcs) {
-            if (arc.begin.equals(vertex)) result.add(arc);
+            if (Objects.equals(arc.begin, vertex)) result.add(arc);
         }
         return result;
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DirectedGraph that = (DirectedGraph) o;
+        return Objects.equals(vertexes, that.vertexes) && Objects.equals(arcs, that.arcs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vertexes, arcs);
+    }
+/*@Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (!(obj instanceof DirectedGraph)) return false;
@@ -169,6 +192,5 @@ public class DirectedGraph {
 
     @Override
     public int hashCode() {
-        return vertexes.hashCode() + arcs.hashCode();
-    }
+        return vertexes.hashCode() + arcs.hashCode();*/
 }
