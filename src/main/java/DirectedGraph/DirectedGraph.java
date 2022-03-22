@@ -80,15 +80,24 @@ public class DirectedGraph {
         if (vertexesString != null && arcsString != null) {
             String[] vertexesNames = vertexesString.split(", ");
             String[] arcsSubstrings = arcsString.split("; ");
-            for (String vertexName: vertexesNames) {
+            for (String vertexName : vertexesNames) {
                 vertexes.put(vertexName, new Vertex(vertexName));
             }
-            for (String arcStr: arcsSubstrings) {
+            for (String arcStr : arcsSubstrings) {
                 String[] arcElements = arcStr.split(", ");
-                Vertex begin = new Vertex(arcElements[0]);
-                Vertex end = new Vertex(arcElements[1]);
+                String begin = arcElements[0];
+                String end = arcElements[1];
                 int weight = Integer.parseInt(arcElements[2]);
-                arcs.add(new Arc(begin, end, weight));
+
+                Vertex beginVertex;
+                if (vertexes.containsKey(begin)) beginVertex = vertexes.get(begin);
+                else beginVertex = new Vertex(begin);
+
+                Vertex endVertex;
+                if (vertexes.containsKey(end)) endVertex = vertexes.get(end);
+                else endVertex = new Vertex(end);
+
+                arcs.add(new Arc(beginVertex, endVertex, weight));
             }
         }
     }
@@ -182,15 +191,4 @@ public class DirectedGraph {
     public int hashCode() {
         return Objects.hash(vertexes, arcs);
     }
-/*@Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (!(obj instanceof DirectedGraph)) return false;
-        DirectedGraph graph = (DirectedGraph) obj;
-        return arcs.equals(graph.arcs) && vertexes.equals(graph.vertexes);
-    }
-
-    @Override
-    public int hashCode() {
-        return vertexes.hashCode() + arcs.hashCode();*/
 }
